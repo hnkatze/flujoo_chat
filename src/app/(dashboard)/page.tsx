@@ -23,13 +23,23 @@ export default function ChatsPage() {
         onSelect={setSelectedPhone}
       />
 
-      <main className="flex-1 overflow-hidden bg-background">
+      <main
+        className={`min-w-0 flex-1 overflow-hidden bg-background md:block ${
+          selectedPhone ? "block" : "hidden"
+        }`}
+      >
         {selectedPhone ? (
-          <ChatPanel conversation={selectedConversation} phone={selectedPhone} />
+          <ChatPanel
+            conversation={selectedConversation}
+            phone={selectedPhone}
+            onBack={() => setSelectedPhone(null)}
+          />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center md:p-8">
             <p className="label-mono text-muted">N°00 · SIN SELECCIÓN</p>
-            <h1 className="text-xl font-semibold text-foreground">Elegí una conversación</h1>
+            <h1 className="text-lg font-semibold text-foreground md:text-xl">
+              Elegí una conversación
+            </h1>
             <p className="max-w-sm text-sm text-muted">
               Los mensajes del chat seleccionado van a aparecer acá.
             </p>

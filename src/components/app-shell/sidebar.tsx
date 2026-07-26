@@ -13,14 +13,16 @@ function ConversationRow({
 
   return (
     <button
-      className={`flex w-full flex-col gap-1 border-b border-border px-4 py-3 text-left transition-colors ${
+      className={`flex min-h-16 w-full flex-col justify-center gap-1 border-b border-border px-4 py-3 text-left transition-colors md:min-h-0 ${
         isSelected ? "bg-foreground text-background" : "hover:bg-background"
       }`}
       type="button"
       onClick={onSelect}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="truncate font-medium">{conversation.name || conversation.phone}</span>
+        <span className="min-w-0 truncate font-medium">
+          {conversation.name || conversation.phone}
+        </span>
         <span
           className={`label-mono shrink-0 ${
             isSelected ? "" : isHuman ? "text-danger" : "text-success"
@@ -47,13 +49,19 @@ export function Sidebar({
   selectedPhone?: string | null;
   onSelect?: (phone: string) => void;
 }) {
+  const isThreadOpen = Boolean(selectedPhone);
+
   return (
-    <aside className="flex w-80 shrink-0 flex-col border-r border-border bg-surface">
+    <aside
+      className={`w-full shrink-0 flex-col border-border bg-surface md:flex md:w-72 md:border-r lg:w-80 xl:w-96 ${
+        isThreadOpen ? "hidden" : "flex"
+      }`}
+    >
       <div className="border-b border-border px-4 py-3">
         <p className="label-mono text-muted">CONVERSACIONES · {conversations.length}</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overscroll-contain">
         {isLoading ? (
           <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
             <p className="label-mono text-muted">CARGANDO…</p>

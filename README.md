@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# flujoo chat
+
+Internal dashboard for flujoo's team to monitor and manage the WhatsApp AI bot conversations, leads, and appointment requests. This is not a public product — it's a team-only operational tool.
+
+## Features
+
+- **Team login gate** — a single shared password protects the dashboard behind a signed, HMAC-SHA256 session cookie (see `src/app/login`).
+- **WhatsApp chats** — a conversation list (`Sidebar`) paired with a message thread (`ChatPanel`). Supports replying directly from the dashboard and toggling each conversation between automatic (bot) and human-handled mode.
+- **Leads** — a table/card view of leads captured through WhatsApp, with an editable status field (`nuevo`, `contactado`, `ganado`, `perdido`) that updates in place.
+- **Agenda** — a read-only list of appointment requests captured through WhatsApp (name, phone, requested day/time, topic).
+
+All dashboard views poll their data on an interval rather than using websockets (see `usePollingResource`).
+
+## Tech Stack
+
+- [Next.js 16](https://nextjs.org) (App Router), TypeScript (strict mode)
+- [Tailwind CSS v4](https://tailwindcss.com) — CSS-first config (`@theme inline` in `src/app/globals.css`), no `tailwind.config.ts`
+- [HeroUI v3 (beta)](https://heroui.com) — compound-component React library built on React Aria, no provider setup required
+- No database of its own — the app is a UI on top of an **n8n** workflow ("WhatsApp Dashboard API") that owns conversations, leads, and appointments data
+
+## Prerequisites
+
+- Node.js 20+
+- Access to the flujoo n8n "WhatsApp Dashboard API" workflow (base URL + bearer token)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env.local
+# then fill in DASHBOARD_PASSWORD, SESSION_SECRET, N8N_DASHBOARD_URL, N8N_DASHBOARD_TOKEN
+
+# Start the dev server (Turbopack)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). You'll be redirected to the login gate first.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Description |
+|----------|-------------|
+| `DASHBOARD_PASSWORD` | Shared password for the team login gate |
+| `SESSION_SECRET` | Secret used to sign the session cookie (HMAC-SHA256). Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"` |
+| `N8N_DASHBOARD_URL` | Base URL of the n8n "WhatsApp Dashboard API" workflow |
+| `N8N_DASHBOARD_TOKEN` | Bearer token for that workflow |
 
-## Learn More
+## Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` — start the dev server (Turbopack) at http://localhost:3000
+- `npm run build` — production build
+- `npm start` — run the production build
+- `npm run lint` — ESLint (flat config, `eslint-config-next`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+No test runner is configured in this repo yet.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── login/              # Login gate (route group-free) + server action
+│   ├── (dashboard)/         # Route group: shared Topbar layout
+│   │   ├── page.tsx         # WhatsApp chats view (Sidebar + ChatPanel)
+│   │   ├── leads/           # Leads view
+│   │   └── agenda/          # Agenda view
+│   └── api/                 # Route handlers proxying to the n8n workflow
+│       ├── conversations/
+│       ├── messages/
+│       ├── reply/
+│       ├── mode/
+│       ├── leads/
+│       └── appointments/
+├── components/
+│   ├── app-shell/            # Topbar, nav, Sidebar
+│   └── chat/                 # ChatPanel and message UI
+├── hooks/                    # usePollingResource, etc.
+├── lib/                      # n8nDashboardFetch and other utilities
+└── types/                    # Conversation, Lead, Appointment types
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **This project's installed Next.js version has breaking changes** relative to common Next.js training data and assumptions. Before writing routing, data-fetching, or config code, check the relevant guide under `node_modules/next/dist/docs/` and read `AGENTS.md` / `CLAUDE.md`.
+- HeroUI v3 is a beta release with a different API from HeroUI v2 (compound components, no `HeroUIProvider`). Don't rely on v2 knowledge.
+- All data (conversations, messages, leads, appointments, mode) lives in the n8n workflow — this app has no database of its own.

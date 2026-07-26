@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* flujoo brand — monochrome ink/paper, sharp edges, color reserved for status only.
+   Matches flujoo.dev: Geist / Geist Mono type, --color-ink #1a1a1a, --color-paper #fff,
+   0px radius everywhere, rose/amber/emerald used strictly as semantic accents. */
+:root,
+[data-theme="light"] {
+  --radius: 0rem;
+
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+
+  --surface: #ffffff;
+  --surface-foreground: #1a1a1a;
+
+  --accent: #1a1a1a;
+  --accent-foreground: #ffffff;
+
+  --danger: oklch(0.62 0.24 14);
+  --danger-foreground: var(--snow);
+
+  --success: oklch(0.6 0.15 163);
+  --success-foreground: var(--snow);
+}
+
+.dark,
+[data-theme="dark"] {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+
+  --surface: oklch(0.19 0.004 285.9);
+  --surface-foreground: #ffffff;
+
+  --accent: #ffffff;
+  --accent-foreground: #1a1a1a;
+
+  --danger: oklch(0.72 0.19 14);
+  --danger-foreground: var(--eclipse);
+
+  --success: oklch(0.75 0.16 163);
+  --success-foreground: var(--eclipse);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+/* Technical/eyebrow micro-label — Geist Mono, uppercase, tracked wide (flujoo.dev pattern) */
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

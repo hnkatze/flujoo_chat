@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+CLAUDE.md
+.claude
+.mcp.json
+claude-rules.json
+claude-rules.lock.json
+# heroui-agents-md
+.heroui-docs/
+.agents
+.atl
+context.md
+skills-lock.json

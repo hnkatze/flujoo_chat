@@ -8,7 +8,7 @@ export function Topbar() {
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-3 sm:px-4 lg:h-16 lg:px-6 xl:px-8">
       <div className="flex min-w-0 items-center gap-3 md:gap-4 lg:gap-6">
         <span className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">
-          flujoo
+          Flujoo Chats
         </span>
         <TopbarNav />
       </div>
